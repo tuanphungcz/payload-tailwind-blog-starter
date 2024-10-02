@@ -19,10 +19,21 @@ export async function generateMetadata() {
   })
 }
 
-const Homepage = async () => {
-  const { homepage } = await getGlobalSettings()
-  const { docs: posts } = await getPosts()
+interface HomepageProps {
+  searchParams: {
+    tags: string
+    sortBy: string
+  }
+}
 
+const Homepage = async ({ searchParams }: HomepageProps) => {
+  const { tags: selectedTags, sortBy: selectedSortBy } = searchParams
+
+  const { homepage } = await getGlobalSettings()
+  const { docs: posts } = await getPosts({
+    selectedTags: selectedTags ? [selectedTags] : [],
+    sortBy: selectedSortBy,
+  })
   return (
     <div className="">
       <div className="py-16 bg-gray-100">

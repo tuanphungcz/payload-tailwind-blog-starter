@@ -6,7 +6,7 @@ interface GetBlogPostsProps {
   sortBy?: string
 }
 
-export const getPosts = cache(async ({ selectedTags, sortBy }: GetBlogPostsProps = {}) => {
+export const getPosts = async ({ selectedTags, sortBy }: GetBlogPostsProps = {}) => {
   const payload = await getPayload()
 
   return await payload.find({
@@ -21,7 +21,7 @@ export const getPosts = cache(async ({ selectedTags, sortBy }: GetBlogPostsProps
     },
     sort: sortBy,
   })
-})
+}
 
 interface GetAdjacentPostsProps {
   currentPostId: string
