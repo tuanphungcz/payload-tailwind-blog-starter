@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { getPosts, getGlobalSettings } from '@/actions'
 import { APP_URL } from '@/constants'
 import Image from 'next/image'
-import { Container, Description, Title } from '@/components/common'
+import { Container, Description, NewTabLink, Title } from '@/components/common'
 import { formatDate, getMetadata } from '@/utils'
 
 export async function generateMetadata() {
@@ -41,6 +41,23 @@ const Homepage = async ({ searchParams }: HomepageProps) => {
           <div className="space-y-2 pb-8 pt-6 md:space-y-5 md:w-2/3">
             <Title>{homepage.title}</Title>
             <Description>{homepage.description}</Description>
+
+            <div className="flex flex-wrap gap-4 mt-6">
+              <NewTabLink
+                href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftuanphungcz%2Fpayload-tailwind-blog-starter&env=PAYLOAD_SECRET,ADMIN_PASSWORD&project-name=payload-tailwind-blog-starter&repository-name=payload-tailwind-blog-starter&demo-url=https%3A%2F%2Fpayload-tailwind-blog-starter.vercel.app%2F&demo-image=https%3A%2F%2Fpayload-tailwind-blog-starter.vercel.app%2Fog-image.jpg&stores=%5B%7B%22type%22:%22blob%22%7D,%7B%22type%22:%22postgres%22%7D%5D"
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-black text-white h-10 px-4 py-2"
+              >
+                <img src="/socials/vercel.svg" alt="Vercel logo" className="mr-2 h-5 w-5" />
+                Vercel Deploy
+              </NewTabLink>
+              <NewTabLink
+                href="https://github.com/tuanphungcz/payload-tailwind-blog-starter"
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-1 ring-gray-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-black h-10 px-4 py-2"
+              >
+                <img src="/socials/github.svg" alt="GitHub logo" className="mr-2 h-5 w-5" />
+                GitHub Repo
+              </NewTabLink>
+            </div>
           </div>
         </Container>
       </div>

@@ -18,6 +18,39 @@ export async function onInit(payload: Payload) {
     if (hasUsers.docs.length === 0) {
       console.log('Starting initialization process...')
 
+      const mediaImagePaths = [
+        path.join(process.cwd(), 'src', 'init', 'x1.png'),
+        path.join(process.cwd(), 'src', 'init', 'x2.png'),
+        path.join(process.cwd(), 'src', 'init', 'x3.png'),
+        path.join(process.cwd(), 'src', 'init', 'x4.png'),
+        path.join(process.cwd(), 'src', 'init', 'x5.png'),
+        path.join(process.cwd(), 'src', 'init', 'x6.png'),
+        path.join(process.cwd(), 'src', 'init', 'x7.png'),
+        path.join(process.cwd(), 'src', 'init', 'x8.png'),
+        path.join(process.cwd(), 'src', 'init', 'x9.png'),
+        path.join(process.cwd(), 'src', 'init', 'x10.png'),
+      ]
+
+      const mediaImages = await Promise.all(
+        mediaImagePaths.map(async (imagePath) => {
+          const fileBuffer = fs.readFileSync(imagePath)
+          const fileName = path.basename(imagePath)
+          const fileNameWithoutExtension = path.parse(fileName).name
+          return await payload.create({
+            collection: 'media',
+            data: {
+              title: fileNameWithoutExtension,
+            },
+            file: {
+              data: fileBuffer,
+              name: fileName,
+              mimetype: 'image/png',
+              size: fileBuffer.byteLength,
+            },
+          })
+        }),
+      )
+
       const userImagePaths = [
         path.join(process.cwd(), 'src', 'init', 'avatar-1.jpg'),
         path.join(process.cwd(), 'src', 'init', 'image-1.jpg'),
