@@ -1,4 +1,4 @@
-import { initPosts, initTags } from '@/init/initData'
+import { getInitPosts, initTags } from '@/init/initData'
 import path from 'path'
 import { Payload } from 'payload'
 import fs from 'fs'
@@ -147,7 +147,7 @@ export async function onInit(payload: Payload) {
 
       console.log('Creating posts...')
       await Promise.all(
-        initPosts.map(async (post, index) => {
+        getInitPosts(mediaImages).map(async (post, index) => {
           await payload.create({
             collection: 'posts',
             data: {

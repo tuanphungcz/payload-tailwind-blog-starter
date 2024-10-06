@@ -1,6 +1,6 @@
 import path from 'path'
 import { en } from 'payload/i18n/en'
-import { BlocksFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
+import { BlocksFeature, lexicalEditor, LinkFeature } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
