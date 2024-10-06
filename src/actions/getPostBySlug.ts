@@ -15,6 +15,7 @@ export const getPostBySlug = cache(async ({ slug }: GetBlogPostBySlugProps) => {
         equals: slug,
       },
     },
+    sort: '-createdAt',
     limit: 1,
   })
 })
