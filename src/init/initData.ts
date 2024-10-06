@@ -1042,8 +1042,6 @@ export const getInitPosts = (mediaImages: Media[]): Post[] => [
       },
     ],
     featuredImage: null,
-    updatedAt: '2024-10-06T22:21:51.965Z',
-    createdAt: '2024-10-03T14:16:40.318Z',
   },
   {
     id: '2', // Add unique ID
