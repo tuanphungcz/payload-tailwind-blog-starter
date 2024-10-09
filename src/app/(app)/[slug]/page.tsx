@@ -9,7 +9,6 @@ import { formatDate, getMetadata, slugify } from '@/utils'
 import { getGlobalSettings } from '@/actions'
 import { APP_URL } from '@/constants'
 import { RichTextRenderer } from '@/cms/blocks/utils/RichTextRenderer'
-import { serializeLexical } from '@/cms/blocks/utils/serialize'
 import Link from 'next/link'
 import { TableOfContents } from '@/components/common/TableOfContents'
 
@@ -60,12 +59,10 @@ const BlogPage = async ({ params }: BlogPageProps) => {
   }
 
   const { previousPost, nextPost } = await getAdjacentPosts({ currentPostId: post.id.toString() })
-  const tocItems = post.content?.root?.children
+
+  const headings = post.content?.root?.children
     .filter((node: any) => node.type === 'heading')
-    .map((heading: any) => ({
-      id: `heading-${slugify(heading.children[0].text)}`,
-      text: serializeLexical({ nodes: heading.children }),
-    }))
+    .map((heading: any, index: number) => heading.children[0].text)
 
   const featuredImageUrl =
     post.featuredImage &&
@@ -149,9 +146,7 @@ const BlogPage = async ({ params }: BlogPageProps) => {
             )}
           </div>
 
-          <div className="space-y-2">
-            <TableOfContents contentSelector=".article-content" headingSelector="h1, h2, h3" />
-          </div>
+          <TableOfContents headings={headings ?? []} />
         </aside>
         <div className="md:w-3/4 space-y-10 py-6">
           {featuredImageUrl && (

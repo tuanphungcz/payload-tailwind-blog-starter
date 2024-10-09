@@ -43,8 +43,7 @@
     "sharp": "0.32.6",
     "slugify": "^1.6.6",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7",
-    "tocbot": "^4.30.0"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",

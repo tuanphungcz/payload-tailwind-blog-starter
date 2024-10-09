@@ -39,6 +39,8 @@ export function slugify(str: string) {
   return str
 }
 
+export const slugifyHeading = (str: string) => `heading-${slugify(str)}`
+
 export const stripUrl = (url: string | null) => {
   if (!url) {
     return ''

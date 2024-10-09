@@ -1,81 +1,92 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
-import tocbot, { IStaticOptions } from 'tocbot'
+import React, { useState, useEffect } from 'react'
+import { slugifyHeading } from '@/utils/helpers'
 
-interface TableOfContentsProps extends IStaticOptions {
-  contentSelector: string
-  headingSelector: string
-  hasInnerContainers?: boolean
-  enableUrlHashUpdateOnScroll?: boolean
-  collapseDepth?: number
-  orderedList?: boolean
-  scrollSmooth?: boolean
-  scrollSmoothDuration?: number
-  scrollSmoothOffset?: number
-  headingsOffset?: number
-  extraLinkClasses?: string
-  activeLinkClass?: string
-}
+export const TableOfContents = ({ headings }: { headings: string[] }) => {
+  const { activeId, setActiveId } = useTableOfContents(headings)
 
-export const TableOfContents = ({
-  contentSelector,
-  headingSelector,
-  hasInnerContainers = true,
-  enableUrlHashUpdateOnScroll = true,
-  collapseDepth = 6,
-  orderedList = false,
-  scrollSmooth = true,
-  scrollSmoothDuration = 400,
-  scrollSmoothOffset = -150,
-  headingsOffset = 150,
-  extraLinkClasses = 'block text-base hover:underline text-gray-700 hover:text-gray-900 transition-colors',
-  activeLinkClass = 'text-gray-900 font-semibold',
-  ...rest
-}: TableOfContentsProps) => {
-  const tocRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    tocbot.init({
-      tocSelector: '.js-toc',
-      contentSelector,
-      headingSelector,
-      hasInnerContainers,
-      enableUrlHashUpdateOnScroll,
-      collapseDepth,
-      orderedList,
-      scrollSmooth,
-      scrollSmoothDuration,
-      extraLinkClasses,
-      activeLinkClass,
-      scrollSmoothOffset,
-      headingsOffset,
-      ...rest,
-    })
-
-    return () => {
-      tocbot.destroy()
+  const handleClick = (id: string) => {
+    const element = document.getElementById(id)
+    if (element) {
+      const yOffset = -100
+      const y = element.getBoundingClientRect().top + window.scrollY + yOffset
+      window.scrollTo({ top: y, behavior: 'smooth' })
+      setActiveId(id)
     }
-  }, [
-    contentSelector,
-    headingSelector,
-    hasInnerContainers,
-    collapseDepth,
-    orderedList,
-    scrollSmooth,
-    scrollSmoothDuration,
-    activeLinkClass,
-    scrollSmoothOffset,
-    headingsOffset,
-    extraLinkClasses,
-    enableUrlHashUpdateOnScroll,
-    rest,
-  ])
+  }
 
   return (
-    <div className="toc-container space-y-2">
-      <h2 className="text-xl font-bold">Table of Contents</h2>
-      <div ref={tocRef} className="js-toc"></div>
-    </div>
+    <nav>
+      <h2 className="mb-4 text-lg font-semibold">Table of Contents</h2>
+      <ul className="space-y-2">
+        {headings.map((heading, index) => {
+          const id = slugifyHeading(heading)
+          return (
+            <div
+              key={index}
+              onClick={() => handleClick(id)}
+              className={`text-slate-700 hover:underline cursor-pointer ${
+                activeId === id ? 'font-bold text-blue-600' : ''
+              }`}
+            >
+              {heading}
+            </div>
+          )
+        })}
+      </ul>
+    </nav>
   )
+}
+
+const useTableOfContents = (headings: string[]) => {
+  const [activeId, setActiveId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveId(entry.target.id)
+          replaceHashInUrl(entry.target.id)
+        }
+      })
+    }, observerOptions)
+
+    const headingElements = headings
+      .map((heading) => document.getElementById(slugifyHeading(heading)))
+      .filter((element): element is HTMLElement => element !== null)
+
+    headingElements.forEach((element) => observer.observe(element))
+
+    return () => observer.disconnect()
+  }, [headings])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY === 0) {
+        replaceHashInUrl('')
+        setActiveId(null)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
+  return { activeId, setActiveId }
+}
+
+const observerOptions = {
+  root: null,
+  rootMargin: '-10% 0px -80% 0px',
+  threshold: 0.1,
+}
+
+const replaceHashInUrl = (hash: string) => {
+  const url = new URL(window.location.href)
+  url.hash = hash
+  window.history.replaceState({}, '', url.toString())
 }

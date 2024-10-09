@@ -10,7 +10,7 @@ import {
   IS_SUPERSCRIPT,
   IS_UNDERLINE,
 } from './nodeFormat'
-import { slugify } from '@/utils'
+import { slugifyHeading } from '@/utils'
 import { CodeBlock } from '@/cms/blocks/CodeBlock'
 
 export type NodeTypes = DefaultNodeTypes | SerializedBlockNode<any>
@@ -166,7 +166,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
 
               return (
                 <Tag
-                  id={`heading-${slugify(firstChildren?.text ?? '')}`}
+                  id={slugifyHeading(firstChildren?.text ?? '')}
                   className="col-start-2"
                   key={index}
                 >

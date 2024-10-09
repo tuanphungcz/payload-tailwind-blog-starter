@@ -35,7 +35,7 @@ export default buildConfig({
       connectionString: process.env.POSTGRES_URL,
     },
     idType: 'uuid',
-    push: isDevelopment,
+    push: false,
   }),
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
