@@ -11,6 +11,7 @@ import { APP_URL } from '@/constants'
 import { RichTextRenderer } from '@/cms/blocks/utils/RichTextRenderer'
 import { serializeLexical } from '@/cms/blocks/utils/serialize'
 import Link from 'next/link'
+import { TableOfContents } from '@/components/common/TableOfContents'
 
 interface BlogPageProps {
   params: {
@@ -59,6 +60,12 @@ const BlogPage = async ({ params }: BlogPageProps) => {
   }
 
   const { previousPost, nextPost } = await getAdjacentPosts({ currentPostId: post.id.toString() })
+  const tocItems = post.content?.root?.children
+    .filter((node: any) => node.type === 'heading')
+    .map((heading: any) => ({
+      id: `heading-${slugify(heading.children[0].text)}`,
+      text: serializeLexical({ nodes: heading.children }),
+    }))
 
   const featuredImageUrl =
     post.featuredImage &&
@@ -92,7 +99,7 @@ const BlogPage = async ({ params }: BlogPageProps) => {
         </Container>
       </header>
       <Container className="md:flex md:gap-14 md:space-x-0 py-12 md:justify-between">
-        <aside className="space-y-12 py-4 md:py-0 md:sticky md:top-16 md:h-screen md:overflow-y-auto md:w-1/4 hidden md:block">
+        <aside className="space-y-12 py-6 md:sticky md:top-16 md:h-screen md:overflow-y-auto md:w-1/4 hidden md:block">
           <div className="flex items-center space-x-4">
             {typeof post.author !== 'string' &&
               (post.author.avatar ? (
@@ -143,23 +150,10 @@ const BlogPage = async ({ params }: BlogPageProps) => {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-bold">Table of Contents</h2>
-            <nav className="space-y-2">
-              {post.content?.root?.children
-                .filter((node: any) => node.type === 'heading')
-                .map((heading: any, index: number) => (
-                  <a
-                    key={index}
-                    href={`#heading-${slugify(heading.children[0].text)}`}
-                    className="block text-base hover:underline text-gray-700 hover:text-gray-900 transition-colors"
-                  >
-                    {serializeLexical({ nodes: heading.children })}
-                  </a>
-                ))}
-            </nav>
+            <TableOfContents contentSelector=".article-content" headingSelector="h1, h2, h3" />
           </div>
         </aside>
-        <div className="md:w-3/4 space-y-10">
+        <div className="md:w-3/4 space-y-10 py-6">
           {featuredImageUrl && (
             <div className="relative w-full aspect-video">
               <Image
@@ -172,7 +166,7 @@ const BlogPage = async ({ params }: BlogPageProps) => {
             </div>
           )}
 
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none article-content">
             <RichTextRenderer content={post.content} />
           </div>
 
